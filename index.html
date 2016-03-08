@@ -1,0 +1,348 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Oc by opentable</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Oc</h1>
+        <p>OpenComponents, a framework for developing and distributing html components</p>
+
+        <p class="view"><a href="https://github.com/opentable/oc">View the Project on GitHub <small>opentable/oc</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/opentable/oc/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/opentable/oc/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/opentable/oc">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="" class="anchor" href="#" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><img src="https://raw.github.com/opentable/oc/master/logo.png" alt="oc">
+</h1>
+
+<p>OpenComponents is a framework to develop and deploy robust and distributed html components.</p>
+
+<p>The goal is to own a system that allows big corporations (that may involve hundreds of engineers on a number of projects) to have tools to facilitate code sharing, reduce dependencies, and easily approach new features and experiments.</p>
+
+<p><a href="https://npmjs.org/package/oc"><img src="https://img.shields.io/npm/v/oc.svg" alt="npm version"></a>
+<a href="https://npmjs.org/package/oc"><img src="https://img.shields.io/node/v/oc.svg" alt="node version"></a>
+<a href="https://npmjs.org/package/oc"><img src="https://img.shields.io/npm/dm/oc.svg?label=downloads+from+npm" alt="downloads"></a>
+<a href="https://gitter.im/opentable/oc?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/Join%20Chat.svg" alt="Join the chat at https://gitter.im/opentable/oc"></a></p>
+
+<p><a href="http://travis-ci.org/opentable/oc"><img src="https://img.shields.io/travis/opentable/oc/master.svg?label=linux+build" alt="linux build"></a>
+<a href="https://ci.appveyor.com/project/matteofigus/oc"><img src="https://img.shields.io/appveyor/ci/matteofigus/oc/master.svg?label=windows+build" alt="windows build"></a></p>
+
+<p><a href="https://saucelabs.com/u/matteofigus"><img src="https://saucelabs.com/browser-matrix/matteofigus.svg" alt="Sauce Test Status"></a></p>
+
+<p>Disclaimer: This project is still under heavy development and the API is likely to change at any time. In case you would find any issues, check the <a href="CONTRIBUTING.md#troubleshooting">troubleshooting page</a>.</p>
+
+<h1>
+<a id="index" class="anchor" href="#index" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Index</h1>
+
+<ol>
+<li><a href="#introduction">Introduction</a></li>
+<li>
+<a href="#components">Components</a>
+
+<ul>
+<li><a href="#creation">Creation</a></li>
+<li><a href="#editing-debugging-testing">Editing, debugging, testing</a></li>
+<li><a href="#publishing-to-a-registry">Publishing to a registry</a></li>
+</ul>
+</li>
+<li>
+<a href="#consuming-components">Consuming components</a>
+
+<ul>
+<li><a href="#client-side-rendering">Client-side rendering</a></li>
+<li><a href="#server-side-rendering">Server-side rendering</a></li>
+</ul>
+</li>
+<li><a href="#install-the-cli">Install the cli</a></li>
+<li><a href="#setup-a-library">Setup a library</a></li>
+<li><a href="#setup-a-registry">Setup a registry</a></li>
+<li><a href="#contacts">Contacts</a></li>
+</ol>
+
+<h1>
+<a id="introduction" class="anchor" href="#introduction" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Introduction</h1>
+
+<p>OpenComponents involves two parts:</p>
+
+<ul>
+<li>The <a href="#components"><code>components</code></a> are small units of isomorphic code mainly consisting of html, javascript, css. They can optionally contain some logic, allowing a server-side node.js application to compose a model that is used to render the view. After rendering they are pieces of pure html to be injected in any html page.</li>
+<li>The <a href="#consuming-components"><code>consumers</code></a> are websites or microsites (<a href="http://tech.opentable.co.uk/blog/2015/02/09/dismantling-the-monolith-microsites-at-opentable/">small independently deployable web sites all connected by a front-door service or any routing mechanism</a>) that need components for rendering partial contents in their web pages.</li>
+</ul>
+
+<p>The framework consists mainly of three parts.</p>
+
+<ul>
+<li>The <a href="#install-the-cli"><code>cli</code></a> allows developers to create, develop, test, and publish components.</li>
+<li>The <a href="#setup-a-library"><code>library</code></a> is where the components are stored after the publishing. When components depend on static resources (such as images, css files, etc.) these are stored, during packaging and publishing, in a publicly-exposed part of the library that serves as cdn.</li>
+<li>The <a href="#setup-a-registry"><code>registry</code></a> is a rest api that is used to consume, retrieve, and publish components. Since they are immutable, the registry is the entity that handles the traffic between the library and the consumers.</li>
+</ul>
+
+<h1>
+<a id="components" class="anchor" href="#components" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Components</h1>
+
+<p>A component is a directory composed by</p>
+
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>package.json</code></td>
+<td>The component definition, dependencies, and more.</td>
+</tr>
+<tr>
+<td><code>view.html</code></td>
+<td>The view containing the markup. Currently we support <code>Handlebars</code> and <code>Jade</code>. It can contain some CSS under the <code>&lt;style&gt;</code> tag and client-side Javascript under the <code>&lt;script&gt;</code> tag.</td>
+</tr>
+<tr>
+<td>
+<code>server.js</code> (optional)</td>
+<td>If the component has some logic, including consuming services, this is the entity that will produce the view-model to compile the view.</td>
+</tr>
+<tr>
+<td>static contents (optional)</td>
+<td>Images, Javascript, and files that will be referenced in the HTML markup.</td>
+</tr>
+<tr>
+<td>*</td>
+<td>Any other files that will be useful for the development such as tests, docs, etc.</td>
+</tr>
+</tbody>
+</table>
+
+<p>After publishing, components are immutable and semantic versioned.</p>
+
+<p><a href="docs/getting-started.md">Getting started with components</a></p>
+
+<p><a href="docs/advanced-operations.md">Advanced operations</a></p>
+
+<h2>
+<a id="creation" class="anchor" href="#creation" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Creation</h2>
+
+<p>To create a folder containing the component:</p>
+
+<div class="highlight highlight-source-shell"><pre>npm install oc -g
+oc init hello-world</pre></div>
+
+<h2>
+<a id="editing-debugging-testing" class="anchor" href="#editing-debugging-testing" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Editing, debugging, testing</h2>
+
+<p>To start a local test registry using a components' folder as a library with a watcher:</p>
+
+<div class="highlight highlight-source-shell"><pre>oc dev <span class="pl-c1">.</span> 3030</pre></div>
+
+<p>To see how the component looks like when consuming it:</p>
+
+<div class="highlight highlight-source-shell"><pre>oc preview http://localhost:3030/hello-world</pre></div>
+
+<p>As soon as you make changes on the component, you will be able to refresh this page and see how it looks.</p>
+
+<h2>
+<a id="publishing-to-a-registry" class="anchor" href="#publishing-to-a-registry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Publishing to a registry</h2>
+
+<p>You will need an online registry connected to a library. A component with the same name and version cannot already exist on that registry.</p>
+
+<div class="highlight highlight-source-shell"><pre><span class="pl-c"># you have to do the registry config first, just once</span>
+oc registry add http://my-components-registry.mydomain.com
+
+<span class="pl-c"># then, ship it</span>
+oc publish hello-world/</pre></div>
+
+<p>Now, it should be available at <code>http://my-components-registry.mydomain.com/hello-world</code>.</p>
+
+<h1>
+<a id="consuming-components" class="anchor" href="#consuming-components" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Consuming components</h1>
+
+<p>From a consumer's perspective, a component is an HTML fragment. You can render components just on the client-side, just on the server-side, or use the client-side rendering as failover strategy for when the server-side rendering fails (for example because the registry is not responding quickly or is down).</p>
+
+<p>You don't need node.js to consume components on the server-side. The registry can provide you rendered components so that you can consume them using any tech stack.</p>
+
+<p>When published, components are immutable and semantic versioned. The registry allows consumers to get any version of the component: the latest patch, or minor version, etc.</p>
+
+<h2>
+<a id="client-side-rendering" class="anchor" href="#client-side-rendering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Client-side rendering</h2>
+
+<p>To make this happen, your components registry has to be publicly available.
+This is all you need:</p>
+
+<div class="highlight highlight-text-html-basic"><pre>&lt;<span class="pl-ent">html</span>&gt;
+  &lt;<span class="pl-ent">head</span>&gt;&lt;/<span class="pl-ent">head</span>&gt;
+  &lt;<span class="pl-ent">body</span>&gt;
+    &lt;<span class="pl-ent">oc</span><span class="pl-e">-component</span> <span class="pl-e">href</span>=<span class="pl-s"><span class="pl-pds">"</span>http://my-components-registry.mydomain.com/hello-world/1.X.X<span class="pl-pds">"</span></span>&gt;&lt;/<span class="pl-ent">oc</span><span class="pl-e">-component</span>&gt;
+    &lt;<span class="pl-ent">script</span> <span class="pl-e">src</span>=<span class="pl-s"><span class="pl-pds">"</span>http://my-components-registry.mydomain.com/oc-client/client.js<span class="pl-pds">"</span></span> /&gt;
+  &lt;/<span class="pl-ent">body</span>&gt;
+&lt;/<span class="pl-ent">html</span>&gt;</pre></div>
+
+<p>For more information about client-side operations, look at <a href="docs/browser-client.md">this page</a>.</p>
+
+<h2>
+<a id="server-side-rendering" class="anchor" href="#server-side-rendering" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Server-side rendering</h2>
+
+<p>You can get rendered components via the registry rest api.</p>
+
+<div class="highlight highlight-source-shell"><pre>curl http://my-components-registry.mydomain.com/hello-world
+
+{
+  <span class="pl-s"><span class="pl-pds">"</span>href<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://my-components-registry.mydomain.com/hello-world<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1.0.0<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>requestVersion<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span><span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>html<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>&lt;oc-component href=<span class="pl-cce">\"</span>https://my-components-registry.mydomain.com/hello-world<span class="pl-cce">\"</span> data-hash=<span class="pl-cce">\"</span>cad2a9671257d5033d2abfd739b1660993021d02<span class="pl-cce">\"</span> id=<span class="pl-cce">\"</span>2890594349<span class="pl-cce">\"</span> data-rendered=<span class="pl-cce">\"</span>true<span class="pl-cce">\"</span> data-version=<span class="pl-cce">\"</span>1.0.13<span class="pl-cce">\"</span>&gt;Hello John doe!&lt;/oc-component&gt;<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>oc-component<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>renderMode<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>rendered<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>Nevertheless, for improving caching and response size, when using the <code>node.js</code> client or any language capable of executing server-side javascript the request will look more like:</p>
+
+<div class="highlight highlight-source-shell"><pre> curl http://my-components-registry.mydomain.com/hello-world/~1.0.0 -H Accept:application/vnd.oc.unrendered+json
+
+{
+  <span class="pl-s"><span class="pl-pds">"</span>href<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://my-components-registry.mydomain.com/hello-world/~1.0.0<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>version<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>1.0.0<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>requestVersion<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>~1.0.0<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>data<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>name<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>John doe<span class="pl-pds">"</span></span>
+  },
+  <span class="pl-s"><span class="pl-pds">"</span>template<span class="pl-pds">"</span></span>: {
+    <span class="pl-s"><span class="pl-pds">"</span>src<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>https://s3.amazonaws.com/your-s3-bucket/components/hello-world/1.0.0/template.js<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>handlebars<span class="pl-pds">"</span></span>,
+    <span class="pl-s"><span class="pl-pds">"</span>key<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>cad2a9671257d5033d2abfd739b1660993021d02<span class="pl-pds">"</span></span>
+  },
+  <span class="pl-s"><span class="pl-pds">"</span>type<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>oc-component<span class="pl-pds">"</span></span>,
+  <span class="pl-s"><span class="pl-pds">"</span>renderMode<span class="pl-pds">"</span></span>: <span class="pl-s"><span class="pl-pds">"</span>unrendered<span class="pl-pds">"</span></span>
+}</pre></div>
+
+<p>In this case you get the compiled view + the data, and you can do the rendering, eventually, interpolating the view-model data and rendering the compiled view with it.</p>
+
+<p>When retrieving multiple components, a <a href="docs/registry-post-route.md">batch POST endpoint</a> allows to make a single request to the API.</p>
+
+<ul>
+<li><a href="client/README.md">Node.js library</a></li>
+<li><a href="https://github.com/opentable/ruby-oc">Ruby library</a></li>
+<li><a href="https://github.com/opentable/opencomponents-rails">Rails plugin</a></li>
+<li><a href="https://github.com/opentable/sinatra-opencomponents">Sinatra plugin</a></li>
+</ul>
+
+<h1>
+<a id="install-the-cli" class="anchor" href="#install-the-cli" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Install the cli</h1>
+
+<div class="highlight highlight-source-shell"><pre>npm install oc -g
+<span class="pl-c"># to see available commands:</span>
+oc</pre></div>
+
+<h1>
+<a id="setup-a-library" class="anchor" href="#setup-a-library" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup a library</h1>
+
+<p>At the moment the only supported library is Amazon S3. Create an account and get the API credentials; you will need them while setting up the registry.</p>
+
+<h1>
+<a id="setup-a-registry" class="anchor" href="#setup-a-registry" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup a registry</h1>
+
+<p>The registry is a node.js express app that serves the components. You can have multiple registries connected to a library, but you can't have multiple libraries connected to a registry.
+First, create a dir and install oc:</p>
+
+<div class="highlight highlight-source-shell"><pre>mkdir oc-registry <span class="pl-k">&amp;&amp;</span> <span class="pl-c1">cd</span> oc-registry
+npm init
+npm install oc --save</pre></div>
+
+<p>Then on the entry point, what you need on an <code>index.js</code> file is:</p>
+
+<div class="highlight highlight-source-js"><pre><span class="pl-k">var</span> oc <span class="pl-k">=</span> <span class="pl-c1">require</span>(<span class="pl-s"><span class="pl-pds">'</span>oc<span class="pl-pds">'</span></span>);
+
+<span class="pl-k">var</span> configuration <span class="pl-k">=</span> {
+  verbosity<span class="pl-k">:</span> <span class="pl-c1">0</span>,
+  baseUrl<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>https://my-components-registry.mydomain.com/<span class="pl-pds">'</span></span>,
+  port<span class="pl-k">:</span> <span class="pl-c1">3000</span>,
+  tempDir<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>./temp/<span class="pl-pds">'</span></span>,
+  refreshInterval<span class="pl-k">:</span> <span class="pl-c1">600</span>,
+  pollingInterval<span class="pl-k">:</span> <span class="pl-c1">5</span>,
+  s3<span class="pl-k">:</span> {
+    key<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>your-s3-key<span class="pl-pds">'</span></span>,
+    secret<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>your-s3-secret<span class="pl-pds">'</span></span>,
+    bucket<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>your-s3-bucket<span class="pl-pds">'</span></span>,
+    region<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>your-s3-region<span class="pl-pds">'</span></span>,
+    path<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>//s3.amazonaws.com/your-s3-bucket/<span class="pl-pds">'</span></span>,
+    componentsDir<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>components<span class="pl-pds">'</span></span>
+  },
+  env<span class="pl-k">:</span> { name<span class="pl-k">:</span> <span class="pl-s"><span class="pl-pds">'</span>production<span class="pl-pds">'</span></span> }
+};
+
+<span class="pl-k">var</span> registry <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-en">oc.Registry</span>(configuration);
+
+<span class="pl-smi">registry</span>.<span class="pl-c1">start</span>(<span class="pl-k">function</span>(<span class="pl-smi">err</span>, <span class="pl-smi">app</span>){
+  <span class="pl-k">if</span>(err){
+    <span class="pl-en">console</span>.<span class="pl-c1">log</span>(<span class="pl-s"><span class="pl-pds">'</span>Registry not started: <span class="pl-pds">'</span></span>, err);
+    <span class="pl-c1">process</span>.<span class="pl-en">exit</span>(<span class="pl-c1">1</span>);
+  }
+});</pre></div>
+
+<p>For the registry configuration's documentation, <a href="docs/registry.md">look at this page</a>.</p>
+
+<h1>
+<a id="contacts" class="anchor" href="#contacts" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Contacts</h1>
+
+<p>We appreciate contributions, in terms of feedbacks, code, anything really. If you use OC in productions, please let us know (but there is no obligation on that as OC is MIT licensed).</p>
+
+<ul>
+<li><a href="CONTRIBUTING.md">contributing guidelines</a></li>
+<li><a href="CONTRIBUTING.md#code-of-conduct">code of conduct</a></li>
+<li><a href="CONTRIBUTING.md#troubleshooting">troubleshooting</a></li>
+<li><a href="https://gitter.im/opentable/oc">gitter chat</a></li>
+<li><a href="mailto:oc@opentable.com">oc@opentable.com</a></li>
+</ul>
+
+<p>Maintainer:</p>
+
+<ul>
+<li><a href="https://github.com/matteofigus">@matteofigus</a></li>
+</ul>
+
+<p>Contributors:</p>
+
+<ul>
+<li><a href="https://github.com/ajcw">@ajcw</a></li>
+<li><a href="https://github.com/andyroyle">@andyroyle</a></li>
+<li><a href="https://github.com/antwhite">@antwhite</a></li>
+<li><a href="https://github.com/char1e5">@char1e5</a></li>
+<li><a href="https://github.com/federicomaffei">@federicomaffei</a></li>
+<li><a href="https://github.com/jankowiakmaria">@jankowiakmaria</a></li>
+<li><a href="https://github.com/pbazydlo">@pbazydlo</a></li>
+<li><a href="https://github.com/stevejhiggs">@stevejhiggs</a></li>
+<li><a href="https://github.com/todd">@todd</a></li>
+<li><a href="https://github.com/tpgmartin">@tpgmartin</a></li>
+</ul>
+
+<h1>
+<a id="license" class="anchor" href="#license" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>License</h1>
+
+<p>MIT</p>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/opentable">opentable</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
