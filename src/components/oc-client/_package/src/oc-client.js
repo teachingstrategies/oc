@@ -328,7 +328,7 @@ var oc = oc || {};
       if(!isRendering && !isRendered){
         logger.info(MESSAGES_RETRIEVING);
         $component.attr('data-rendering', true);
-        $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
+        // $component.html('<div class="oc-loading">' + MESSAGES_LOADING_COMPONENT + '</div>');
 
         oc.renderByHref($component.attr('href'), function(err, data){
           if(err || !data){
@@ -365,6 +365,9 @@ var oc = oc || {};
 
         oc.$.ajax({
           url: hrefWithCount,
+          xhrFields: {
+            withCredentials: true
+          },
           headers: { 'Accept': 'application/vnd.oc.unrendered+json' },
           contentType: 'text/plain',
           crossDomain: true,
