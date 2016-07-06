@@ -86,6 +86,14 @@ module.exports = function(options){
     plugins.push(_.extend(plugin, { callback: cb }));
   };
 
+  this.publish = function(path, name, version, callback) {
+    if(!_.isFunction(callback)){
+      callback = _.noop;
+    }
+
+    repository.publishComponent(path, name, version, callback);
+  };
+
   this.start = function(callback){
 
     if(!_.isFunction(callback)){
