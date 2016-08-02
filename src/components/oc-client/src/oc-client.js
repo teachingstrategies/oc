@@ -111,6 +111,12 @@ var oc = oc || {};
 
     if(typeof(nameSpace) === 'string'){
       nameSpace = [nameSpace];
+
+      // if it's a non-scoped dependency and there is requirejs, use that.
+      if (typeof require === "function") {
+        require(nameSpace, callback);
+        return;
+      }
     }
 
     var needsToBeLoaded = function(){
@@ -275,7 +281,9 @@ var oc = oc || {};
       };
 
       var wasDollarThereAlready = !!$window.$;
-      oc.require('jQuery', JQUERY_URL, function(jQuery){
+
+      // need to require the right package for jquery.  For some reason, OC requires jQuery for the internal one.
+      oc.require((typeof(require) === "function" ? 'jquery' : 'jQuery'), JQUERY_URL, function(jQuery){
 
         requirePolyfills(jQuery, function(){
           if(wasDollarThereAlready){

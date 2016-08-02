@@ -111,6 +111,11 @@ var oc = oc || {};
 
     if(typeof(nameSpace) === 'string'){
       nameSpace = [nameSpace];
+
+      if (typeof require === "function") {
+        require(nameSpace, callback);
+        return;
+      }
     }
 
     var needsToBeLoaded = function(){
@@ -275,7 +280,7 @@ var oc = oc || {};
       };
 
       var wasDollarThereAlready = !!$window.$;
-      oc.require('jQuery', JQUERY_URL, function(jQuery){
+      oc.require((typeof(require) === "function" ? 'jquery' : 'jQuery'), JQUERY_URL, function(jQuery){
 
         requirePolyfills(jQuery, function(){
           if(wasDollarThereAlready){
